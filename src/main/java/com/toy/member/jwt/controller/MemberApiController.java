@@ -24,7 +24,9 @@ public class MemberApiController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @PostMapping("/api/sign-up")
+
+    @PostMapping("/api/sign-up") // POST 방식용 매핑
+    // @RequestBody 는 POST 요청시 붙여야하는 어노테이션
     public ResponseEntity<Object> createMember(@RequestBody @Validated MemberDto memberDto){
 
         ModelMapper modelMapper= new ModelMapper();
@@ -33,6 +35,7 @@ public class MemberApiController {
 
         Member member = modelMapper.map(memberDto,Member.class);
 
+        // db 에 넣을때 암호화 해주는용도
         String password = passwordEncoder.encode(member.getMemberPassword());
         member.setMemberPassword(password);
         member.setType(Member.RoleType.ROLE_USER);
