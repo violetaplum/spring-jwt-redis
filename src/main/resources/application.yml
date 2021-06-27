@@ -1,0 +1,40 @@
+server:
+  port: 8080
+
+spring:
+  security:
+    user:
+      name: user
+      password: password
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/testdb
+    username: postgres
+    password: password
+    driverClassName: org.postgresql.Driver
+
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        default_schema: jwt
+        jdbc:
+          lob:
+            non_contextual_creation: true
+    hibernate:
+      ddl-auto: update
+
+  thymeleaf:
+    cache: false
+
+  devtools:
+    livereload:
+      enabled: true
+    restart:
+      enabled: true
+
+  main:
+    allow-bean-definition-overriding: true
+
+

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko" xml:lang="ko" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8">
+		<title>Spring security JWT</title>
+		<script th:src="@{../js/jquery-3.6.0.min.js}"></script>
+		<script th:src="@{../js/jquery-ui.min.js}"></script>
+		<script>
+
+			function validationCheck() {
+				if (!$("#memberId").val()) {
+					alert('ID를 입력해주세요')
+					return false;
+				} else if (!$("#memberName").val()) {
+					alert('이름을 입력해주세요')
+					return false;
+				} else if (!$("#memberPassword").val()) {
+					alert('비밀번호를 입력해주세요')
+					return false;
+				} else if (!$("#email").val()) {
+					alert('이메일을 입력해주세요')
+					return false;
+				}
+				return true;
+			}
+
+			function createMember() {
+				const check = validationCheck();
+				if (!check) {
+					return false;
+				}
+
+				const data = {
+					'memberId': $("#memberId").val(),
+					'memberName': $("#memberName").val(),
+					'memberPassword': $("#memberPassword").val(),
+					'email': $("#email").val(),
+				};
+				console.log(JSON.stringify(data))
+
+				$.ajax({
+					type: "POST",
+					url: "/api/sign-up",
+					data: JSON.stringify(data),
+					dataType: 'text',
+					contentType: 'application/json',
+					success: function (data, status, xhr) {
+						console.log("success")
+						console.log(data)
+						console.log(status)
+						console.log(xhr)
+
+						if (xhr.status == 200) {
+							alert('회원가입이 완료되었습니다.')
+							location.href = "/login"
+						}
+					},
+					error: function (xhr, status, error) {
+						console.log("error")
+						console.log(xhr)
+						console.log(status)
+						console.log(error)
+						alert(xhr.responseText);
+					}
+				});
+
+
+			}
+		</script>
+	</head>
+	<body>
+		<form th:id="signinForm" th:name="signinForm"  th:action="@{/api/sign-up}" method="post">
+			<h2>회원가입</h2>
+			<p>아이디</p>
+			<input type="text" th:id="memberId" placeholder="아이디를 입력해주세요">
+			<p>비밀번호</p>
+			<input type="password" th:id="memberPassword" placeholder="비밀번호를 입력해주세요">
+			<p>이름</p>
+			<input type="text" th:id="memberName" placeholder="이름을 입력해주세요">
+			<p>이메일</p>
+			<input type="text" th:id="email" placeholder="이메일을 입력해주세요"><br><br><br>
+			<input type="button" value="가입하기" th:onclick="createMember()">
+		</form>
+		<a href="/login"><h5>로그인</h5></a>
+	</body>
+</html>

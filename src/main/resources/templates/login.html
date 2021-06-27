@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xml:lang="ko" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8">
+		<title>Spring security JWT</title>
+	</head>
+	<body>
+		<form th:id="signinForm" th:name="signinForm"  th:action="@{/api/login/process}" method="post">
+			<h2>로그인</h2>
+			<p>아이디</p>
+			<input type="text" th:id="username" th:name="username" placeholder="아이디를 입력해주세요">
+			<p>비밀번호</p>
+			<input type="password" th:id="password" th:name="password" placeholder="비밀번호를 입력해주세요">
+			<input type="hidden" th:value="secret" th:name="secret_key"><br><br>
+			<input type="submit" value="로그인">
+		</form>
+		<div th:if="${param.error}">
+			<span th:text="${param.errMsg}" style="color:darkred;"></span>
+		</div>
+		<a href="/sign-up"><h5>회원가입</h5></a>
+	</body>
+</html>
