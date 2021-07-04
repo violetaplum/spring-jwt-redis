@@ -6,5 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 // 로그찍는애
 @Slf4j
 public class AdminApiController {
-
+  public void tes(){
+      System.out.println("AdminApiController.tes");
+  }
 }
