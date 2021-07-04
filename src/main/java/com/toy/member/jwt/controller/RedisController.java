@@ -19,7 +19,7 @@ public class RedisController {
     @Value("${redis.host}")
     private static String ip;
 
-    @GetMapping("hi")
+    @GetMapping("/redis-test")
     public Map<String, String> uid(HttpSession session) {
         UUID uid = Optional.ofNullable(UUID.class.cast(session.getAttribute("uid")))
                 .orElse(UUID.randomUUID());
