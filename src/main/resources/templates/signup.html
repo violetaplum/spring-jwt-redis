@@ -30,20 +30,24 @@
 					return false;
 				}
 
+				// Member dto 선언돼있던 객체
 				const data = {
 					'memberId': $("#memberId").val(),
 					'memberName': $("#memberName").val(),
 					'memberPassword': $("#memberPassword").val(),
 					'email': $("#email").val(),
 				};
+				// 객체를 json 화
 				console.log(JSON.stringify(data))
 
+				// http request 쏘는놈
 				$.ajax({
 					type: "POST",
 					url: "/api/sign-up",
 					data: JSON.stringify(data),
 					dataType: 'text',
 					contentType: 'application/json',
+					// success 일때
 					success: function (data, status, xhr) {
 						console.log("success")
 						console.log(data)
@@ -52,9 +56,11 @@
 
 						if (xhr.status == 200) {
 							alert('회원가입이 완료되었습니다.')
+							// login 페이지로 이동
 							location.href = "/login"
 						}
 					},
+					// 오류발생시
 					error: function (xhr, status, error) {
 						console.log("error")
 						console.log(xhr)

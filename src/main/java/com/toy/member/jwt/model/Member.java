@@ -8,16 +8,19 @@ import org.hibernate.annotations.Where;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
 @Table(name = "MEMBER")
+// where deleted = 'false' 인 애들만 가져온다는 말
+// 유저가 탈퇴해도 flag 만 변경하고 정보는 남기기 위해 추가됨
 @Where(clause = "DELETED = false")
 @Entity
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Member {
+public class Member implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -60,6 +63,6 @@ public class Member {
 
     public enum RoleType{
         ROLE_USER,
-        ROLE_ADMIN
+        ROLE_ADMIN,
     }
 }

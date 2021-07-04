@@ -26,6 +26,7 @@ public class MainController {
         return "access_deny";
     }
 
+    // admin 에게만 권한 부여됨
     @GetMapping("/my-page")
     public String myPage(){
         return "mypage";
