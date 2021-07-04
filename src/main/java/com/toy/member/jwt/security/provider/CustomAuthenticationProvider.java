@@ -37,7 +37,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             throw new InsufficientAuthenticationException("InsufficientAuthenticationException");
         }
 
-        System.out.println(memberContext.getMember().getType());
 
         return new UsernamePasswordAuthenticationToken(memberContext.getMember(), null, memberContext.getAuthorities());
 
