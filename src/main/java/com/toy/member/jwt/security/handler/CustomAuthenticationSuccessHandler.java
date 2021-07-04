@@ -3,6 +3,7 @@ package com.toy.member.jwt.security.handler;
 import com.toy.member.jwt.model.Member;
 import com.toy.member.jwt.utils.CookieUtils;
 import com.toy.member.jwt.utils.JwtUtils;
+import com.toy.member.jwt.utils.RedisUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -32,6 +33,8 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     private JwtUtils jwtUtils;
     @Autowired
     private CookieUtils cookieUtils;
+    @Autowired
+    private RedisUtils redisUtils;
 
 
     @Override
@@ -46,7 +49,7 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         final String refreshJwt = jwtUtils.generateRefreshToken(member);
         Cookie accessToken = cookieUtils.createCookie(JwtUtils.ACCESS_TOKEN_NAME, token);
         Cookie refreshToken = cookieUtils.createCookie(JwtUtils.REFRESH_TOKEN_NAME, refreshJwt);
-
+        redisUtils.setDataExpire(refreshJwt, member.getMemberId(), jwtUtils.REFRESH_TOKEN_EXPIRE_TIME);
         response.addCookie(accessToken);
         response.addCookie(refreshToken);
 
