@@ -1,45 +1,30 @@
 package com.toy.member.jwt.security.config;
 
+import com.toy.member.jwt.security.filter.JwtRequestFilter;
 import com.toy.member.jwt.security.handler.CustomAccessDeniedHandler;
-import com.toy.member.jwt.security.handler.CustomAuthenticationFailureHandler;
-import com.toy.member.jwt.security.handler.CustomAuthenticationSuccessHandler;
-import com.toy.member.jwt.security.provider.CustomAuthenticationProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationDetailsSource;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-@Configuration
+
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter{
 
-	@Autowired
-	private AuthenticationDetailsSource authenticationDetailsSource;
-
-	@Autowired
-	private AuthenticationSuccessHandler authenticationSuccessHandler;
-
-	@Autowired
-	private AuthenticationFailureHandler authenticationFailureHandler;
-
-	@Override
-	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.authenticationProvider(authenticationProvider());
-	}
+	private final AuthenticationEntryPoint customAuthenticationEntryPoint;
+	private final AccessDeniedHandler accessDeniedHandler;
+	private final JwtRequestFilter jwtRequestFilter;
 
 	@Override
 	public void configure(WebSecurity web) {
@@ -51,50 +36,40 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter{
 
 		http
 				.csrf()
-				.disable();
-		http
+				.disable()
+				.httpBasic()
+				.authenticationEntryPoint(customAuthenticationEntryPoint)
+				.and()
+				.exceptionHandling().accessDeniedHandler(accessDeniedHandler)
+				.and()
+				.sessionManagement()
+				.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+				.and()
 				.authorizeRequests()
 				.antMatchers("/login","/login**").permitAll()
 				.antMatchers("/sign-up").permitAll()
 				.antMatchers("/api/sign-up").permitAll()
-				.antMatchers("/my-page", "/main").authenticated()
+				.antMatchers("/api/login/process").permitAll()
 				.antMatchers("/my-page").hasRole("ADMIN")
+				.antMatchers("/main").hasAnyRole("ADMIN","USER")
 				.anyRequest().authenticated();
-
-		http.formLogin()
-				.loginPage("/login")
-				.loginProcessingUrl("/api/login/process")
-				.authenticationDetailsSource(authenticationDetailsSource)
-				.defaultSuccessUrl("/main")
-				.successHandler(authenticationSuccessHandler)
-				.failureHandler(authenticationFailureHandler)
-				.permitAll();
-		http
-				.exceptionHandling()
-				.accessDeniedHandler(accessDeniedHandler());
+		http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
 	}
-	@Bean
-	public AccessDeniedHandler accessDeniedHandler(){
-		return new CustomAccessDeniedHandler("/access-deny");
-	}
-	@Bean
-	public AuthenticationProvider authenticationProvider(){
-		return new CustomAuthenticationProvider();
-	}
-
 	@Bean
 	public PasswordEncoder passwordEncoder() {
-
 		return new BCryptPasswordEncoder();
 	}
+
 	@Bean
-	public AuthenticationSuccessHandler customAuthenticationSuccessHandler(){
-		return new CustomAuthenticationSuccessHandler();
+	@Override
+	public AuthenticationManager authenticationManagerBean() throws Exception {
+		return super.authenticationManagerBean();
 	}
+
 	@Bean
-	public AuthenticationFailureHandler customAuthenticationFailureHandler(){
-		return new CustomAuthenticationFailureHandler();
+	public AccessDeniedHandler accessDeniedHandler(){
+		return new CustomAccessDeniedHandler();
 	}
 
 }

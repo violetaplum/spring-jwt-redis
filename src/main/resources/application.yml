@@ -2,10 +2,10 @@ server:
   port: 8080
 
 spring:
-  security:
-    user:
-      name: user
-      password: password
+  jwt:
+    secret: spring-security-jwt-redis-toy-project
+    token-expire-time: 1800
+    refresh-token-expire-time: 259200
 
   datasource:
     url: jdbc:postgresql://localhost:5432/testdb

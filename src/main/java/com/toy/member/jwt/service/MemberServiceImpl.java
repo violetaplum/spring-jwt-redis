@@ -1,16 +1,19 @@
 package com.toy.member.jwt.service;
 
-import com.toy.member.jwt.model.Member;
+import com.toy.member.jwt.domain.Member;
 import com.toy.member.jwt.repository.MemberRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
 
-    @Autowired
-    MemberRepository memberRepository;
+    private final MemberRepository memberRepository;
+
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void checkMemberId(String memberId){
@@ -30,5 +33,20 @@ public class MemberServiceImpl implements MemberService {
     public void saveMember(Member member) {
 
         memberRepository.save(member);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Member loginMember(String username, String password) {
+        Member member = memberRepository.findByMemberId(username).orElseThrow(() ->
+                new IllegalArgumentException("아이디 혹은 비밀번호가 일치하지않습니다.")
+        );
+        Boolean match = passwordEncoder.matches(password, member.getMemberPassword());
+
+        if(match.equals(false)){
+            throw new IllegalArgumentException("아이디 혹은 비밀번호가 일치하지않습니다.");
+        }
+
+        return member;
     }
 }

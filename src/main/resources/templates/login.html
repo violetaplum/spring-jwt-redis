@@ -11,12 +11,55 @@
 			<input type="text" th:id="username" th:name="username" placeholder="아이디를 입력해주세요">
 			<p>비밀번호</p>
 			<input type="password" th:id="password" th:name="password" placeholder="비밀번호를 입력해주세요">
-			<input type="hidden" th:value="secret" th:name="secret_key"><br><br>
-			<input type="submit" value="로그인">
+			<br><br>
+			<input type="button" value="로그인" th:onclick="loginMember()">
 		</form>
 		<div th:if="${param.error}">
 			<span th:text="${param.errMsg}" style="color:darkred;"></span>
 		</div>
 		<a href="/sign-up"><h5>회원가입</h5></a>
+
+		<script th:src="@{../js/jquery-3.6.0.min.js}"></script>
+		<script>
+			function loginMember() {
+				const check = validationCheck();
+				if (!check) {
+					return false;
+				}
+
+				// Member dto 선언돼있던 객체
+				const data = {
+					'username': $("#username").val(),
+					'password': $("#password").val()
+				};
+
+				$.ajax({
+					type: "POST",
+					url: "/api/login/process",
+					data: JSON.stringify(data),
+					contentType: 'application/json',
+					success: function (data, status, xhr) {
+						if (xhr.status == 200) {
+							alert('환영합니다!')
+							location.href = "/main"
+						}
+					},
+					error: function (xhr, status, error) {
+						alert(xhr.responseJSON.message);
+					}
+				});
+			}
+			function validationCheck() {
+				if (!$("#username").val()) {
+					alert('ID를 입력해주세요')
+					return false;
+				} else if (!$("#password").val()) {
+					alert('비밀번호를 입력해주세요')
+					return false;
+				}
+				return true;
+			}
+
+		</script>
 	</body>
 </html>

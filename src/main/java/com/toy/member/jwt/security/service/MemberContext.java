@@ -1,6 +1,6 @@
 package com.toy.member.jwt.security.service;
 
-import com.toy.member.jwt.model.Member;
+import com.toy.member.jwt.domain.Member;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 

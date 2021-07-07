@@ -1,6 +1,6 @@
 package com.toy.member.jwt.utils;
 
-import com.toy.member.jwt.model.Member;
+import com.toy.member.jwt.domain.Member;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -9,15 +9,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import javax.crypto.SecretKey;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
-import java.util.Arrays;
-import java.util.Base64;
 import java.util.Date;
-import java.util.List;
 
 @Component
 public class JwtUtils implements Serializable {
@@ -28,12 +23,12 @@ public class JwtUtils implements Serializable {
     public final static String ACCESS_TOKEN_NAME = "accessToken";
     public final static String REFRESH_TOKEN_NAME = "refreshToken";
 
-    @Value("${spring.jwt.secret")
+    @Value("${spring.jwt.secret}")
     private String SECRET_KEY;
 
     private Key getSigningKey(String secretKey) {
-        return Keys.secretKeyFor(SignatureAlgorithm.HS256);
-
+        byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 
     public Claims extractAllClaims(String token){

@@ -1,7 +1,8 @@
 package com.toy.member.jwt.security.service;
 
-import com.toy.member.jwt.model.Member;
+import com.toy.member.jwt.domain.Member;
 import com.toy.member.jwt.repository.MemberRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -16,10 +17,10 @@ import java.util.List;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
-    @Autowired
-    MemberRepository repository;
+    private final MemberRepository repository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

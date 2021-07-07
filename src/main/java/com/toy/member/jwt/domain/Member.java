@@ -1,4 +1,4 @@
-package com.toy.member.jwt.model;
+package com.toy.member.jwt.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

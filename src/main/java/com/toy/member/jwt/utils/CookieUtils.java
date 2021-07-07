@@ -1,5 +1,6 @@
 package com.toy.member.jwt.utils;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -8,10 +9,13 @@ import javax.servlet.http.HttpServletRequest;
 
 @Service
 public class CookieUtils {
+    @Value("${spring.jwt.token-expire-time}")
+    private Long TOKEN_EXPIRE_TIME;
+
     public Cookie createCookie(String cookieName, String value){
         Cookie token = new Cookie(cookieName,value);
         token.setHttpOnly(true);
-        token.setMaxAge((int)JwtUtils.TOKEN_EXPIRE_TIME);
+        token.setMaxAge(TOKEN_EXPIRE_TIME.intValue());
         token.setPath("/");
 
         return token;

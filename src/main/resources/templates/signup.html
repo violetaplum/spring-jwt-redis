@@ -3,8 +3,23 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>Spring security JWT</title>
+	</head>
+	<body>
+		<form th:id="signinForm" th:name="signinForm"  th:action="@{/api/sign-up}" method="post">
+			<h2>회원가입</h2>
+			<p>아이디</p>
+			<input type="text" th:id="memberId" placeholder="아이디를 입력해주세요">
+			<p>비밀번호</p>
+			<input type="password" th:id="memberPassword" placeholder="비밀번호를 입력해주세요">
+			<p>이름</p>
+			<input type="text" th:id="memberName" placeholder="이름을 입력해주세요">
+			<p>이메일</p>
+			<input type="text" th:id="email" placeholder="이메일을 입력해주세요"><br><br><br>
+			<input type="button" value="가입하기" th:onclick="createMember()">
+		</form>
+		<a href="/login"><h5>로그인</h5></a>
+
 		<script th:src="@{../js/jquery-3.6.0.min.js}"></script>
-		<script th:src="@{../js/jquery-ui.min.js}"></script>
 		<script>
 
 			function validationCheck() {
@@ -37,22 +52,15 @@
 					'memberPassword': $("#memberPassword").val(),
 					'email': $("#email").val(),
 				};
-				// 객체를 json 화
-				console.log(JSON.stringify(data))
 
 				// http request 쏘는놈
 				$.ajax({
 					type: "POST",
 					url: "/api/sign-up",
 					data: JSON.stringify(data),
-					dataType: 'text',
 					contentType: 'application/json',
 					// success 일때
 					success: function (data, status, xhr) {
-						console.log("success")
-						console.log(data)
-						console.log(status)
-						console.log(xhr)
 
 						if (xhr.status == 200) {
 							alert('회원가입이 완료되었습니다.')
@@ -62,31 +70,10 @@
 					},
 					// 오류발생시
 					error: function (xhr, status, error) {
-						console.log("error")
-						console.log(xhr)
-						console.log(status)
-						console.log(error)
-						alert(xhr.responseText);
+						alert(xhr.responseJSON.message);
 					}
 				});
-
-
 			}
 		</script>
-	</head>
-	<body>
-		<form th:id="signinForm" th:name="signinForm"  th:action="@{/api/sign-up}" method="post">
-			<h2>회원가입</h2>
-			<p>아이디</p>
-			<input type="text" th:id="memberId" placeholder="아이디를 입력해주세요">
-			<p>비밀번호</p>
-			<input type="password" th:id="memberPassword" placeholder="비밀번호를 입력해주세요">
-			<p>이름</p>
-			<input type="text" th:id="memberName" placeholder="이름을 입력해주세요">
-			<p>이메일</p>
-			<input type="text" th:id="email" placeholder="이메일을 입력해주세요"><br><br><br>
-			<input type="button" value="가입하기" th:onclick="createMember()">
-		</form>
-		<a href="/login"><h5>로그인</h5></a>
 	</body>
 </html>

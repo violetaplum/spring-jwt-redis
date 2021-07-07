@@ -1,11 +1,11 @@
-package com.toy.member.jwt.model.dto;
+package com.toy.member.jwt.domain.dto;
 
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Builder
-public class MemberLoginRequest {
+public class MemberLoginDto {
 
     private String username;
 
