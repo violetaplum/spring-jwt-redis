@@ -1,0 +1,24 @@
+version: "3.2"
+services:
+  postgresql:
+    image: postgres
+    container_name: postgres
+    restart: always
+    volumes:
+      - ./postgresql/data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: "password"
+      TZ: "Asia/Seoul"
+
+  redis:
+    image: redis
+    command: redis-server --requirepass password --port 6379
+    container_name: redis
+    hostname: redis
+    labels:
+      - "name=redis"
+      - "mode=standalone"
+    ports:
+      - 6379:6379
