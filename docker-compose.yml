@@ -1,6 +1,6 @@
 version: "3.2"
 services:
-  postgresql:
+  database:
     image: postgres
     container_name: postgres
     restart: always
@@ -14,11 +14,35 @@ services:
 
   redis:
     image: redis
-    command: redis-server --requirepass password --port 6379
-    container_name: redis
-    hostname: redis
-    labels:
-      - "name=redis"
-      - "mode=standalone"
+    restart: always
+    environment:
+      - REDIS_REPLICATION_NODE=master
+      - REDIS_PASSWORD=${MASTER_PASSWORD}
     ports:
       - 6379:6379
+
+  redis-cli:
+    depends_on:
+      - redis
+    image: redis
+    network_mode: host
+    command: redis-cli -h 127.0.0.1 ping
+
+  application:
+    build: .
+    ports:
+      - 8080:8080
+    depends_on:
+      - redis
+      - database
+    container_name: security-jwt
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/testdb
+      SPRING_DATASOURCE_USERNAME: postgres
+
+networks:
+  jwtnet:
+
+
+
+
